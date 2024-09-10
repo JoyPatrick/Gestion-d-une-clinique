@@ -21,23 +21,31 @@ public class Clinic {
             if (doctorTriageType == TriageType.FIFO) {
                 fileAttenteMedecin.addAtBeginning(patient);
             } else if (doctorTriageType == TriageType.GRAVITY) {
-                // Gravity algo
+                //
             }
 
         } else if (visibleSymptom == VisibleSymptom.FLU) {
 
             if (doctorTriageType == TriageType.FIFO) {
                 fileAttenteMedecin.add(patient);
-            } else if (doctorTriageType == TriageType.GRAVITY) {
-                if (gravity > 7) {
-                    fileAttenteMedecin.addAtBeginning(patient);
-                }
-            }
+            } else triageTypeGravityCheck(gravity, patient);
 
         } else if (visibleSymptom == VisibleSymptom.SPRAIN) {
 
             if (doctorTriageType == TriageType.FIFO) {
                 fileAttenteMedecin.addAtBeginning(patient);
+
+                if (fileAttenteRadiologie.isEmpty()) {
+                    fileAttenteRadiologie.addAtBeginning(patient);
+                } else {
+                    Patient firstPatient = fileAttenteRadiologie.getFirstPatient();
+                    if (firstPatient.gravity() < gravity) {
+                        fileAttenteRadiologie.addAtBeginning(patient);
+                    } else {
+                        fileAttenteRadiologie.add(patient);
+                    }
+                }
+
                 fileAttenteRadiologie.addAtBeginning(patient);
             } else if (doctorTriageType == TriageType.GRAVITY) {
                 //
@@ -46,16 +54,36 @@ public class Clinic {
         } else if (visibleSymptom == VisibleSymptom.BROKEN_BONE) {
             if (doctorTriageType == TriageType.FIFO) {
                 //
-            } else if (doctorTriageType == TriageType.GRAVITY) {
-                if (gravity > 7) {
-                    fileAttenteMedecin.addAtBeginning(patient);
+            } else {
+                if ((!fileAttenteMedecin.isEmpty() && !fileAttenteRadiologie.isEmpty())
+                        && doctorTriageType == TriageType.GRAVITY && radiologyTriageType == TriageType.GRAVITY) {
+                    Patient firstPatient = fileAttenteRadiologie.getFirstPatient();
+                    if (firstPatient.gravity() < gravity) {
+                        fileAttenteRadiologie.addAtBeginning(patient);
+                    } else {
+                        fileAttenteRadiologie.add(patient);
+                    }
+                } else {
+                    //fileAttenteRadiologie.add(patient);
                 }
+
+                triageTypeGravityCheck(gravity, patient);
             }
         }
     }
 
-
-
-    // D'autres méthodes peuvent être nécessaires
-
+    private void triageTypeGravityCheck(int gravity, Patient patient) {
+        if (doctorTriageType == TriageType.GRAVITY) {
+            if (fileAttenteMedecin.isEmpty()) {
+                fileAttenteMedecin.add(patient);
+            } else {
+                Patient firstPatient = fileAttenteMedecin.getFirstPatient();
+                if (firstPatient.gravity() < gravity) {
+                    fileAttenteMedecin.addAtBeginning(patient);
+                } else {
+                    fileAttenteMedecin.add(patient);
+                }
+            }
+        }
+    }
 }

@@ -22,4 +22,8 @@ public class FifoQueue {
     public boolean isEmpty() {
         return queue.isEmpty();
     }
+
+    public Patient getFirstPatient() {
+        return queue.getFirst();
+    }
 }
